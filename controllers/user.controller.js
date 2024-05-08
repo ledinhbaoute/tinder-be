@@ -5,6 +5,7 @@ const mysql = require('mysql');
 const { response } = require('express');
 const { addUser } = require('../service/user.service');
 const sendOTP = require('../service/otp/sendOTP');
+const verifyOTP = require('../service/otp/verifyOTP');
 
 module.exports = {
   addUser: async (req, res) => {
@@ -35,20 +36,46 @@ module.exports = {
   sendOTP: async (req, res) => {
     try {
       var phoneNumber = req.body.phoneNumber;
-      const result = await sendOTP(phoneNumber);
-      if (result) {
-        res.json({
-          success: true,
-          message: 'OTP is send',
-          data: result.dataValues,
+      await sendOTP(phoneNumber)
+        .then(pinId => {
+          res.json({
+            success: true,
+            message: 'Send OTP succcessful',
+            data: pinId,
+          });
+        })
+        .catch(error => {
+          console.error('Error:', error);
         });
-      } else {
-        res.json({
-          success: false,
-          message: 'Cannot send OTP',
-          data: req.body,
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        message: error,
+        req: req.body,
+      });
+    }
+  },
+  verifyOTP: async (req, res) => {
+    try {
+      var { pin, pinId } = req.body;
+      await verifyOTP(pin, pinId)
+        .then(result => {
+          if (result.verified) {
+            res.json({
+              success: true,
+              message: 'Verify OTP succcessful',
+            });
+          } else {
+            res.json({
+              success: false,
+              message: 'Wrong OTP',
+              attemptsRemaining: result.attemptsRemaining,
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
         });
-      }
     } catch (error) {
       console.log(error);
       return res.status(500).json({
