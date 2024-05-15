@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const User = require('../models/User');
 
 async function getAllUsers() {
@@ -9,6 +10,15 @@ async function getAllUsers() {
   }
 }
 
+async function findUserByPhone(phoneNumber) {
+  try {
+    const user = await User.findOne({ where: { phoneNumber: phoneNumber } });
+    return user;
+  } catch (error) {
+    throw new Error(`Error finding users: ${error.message}`);
+  }
+}
+
 async function addUser(user) {
   try {
     const newUser = await User.create({
@@ -16,6 +26,7 @@ async function addUser(user) {
       gender: user.gender,
       phoneNumber: user.phoneNumber,
       birthDay: user.birthDay,
+      interest: user.interest,
     });
     return newUser;
   } catch (error) {
@@ -23,4 +34,4 @@ async function addUser(user) {
   }
 }
 
-module.exports = { getAllUsers, addUser };
+module.exports = { getAllUsers, addUser, findUserByPhone };

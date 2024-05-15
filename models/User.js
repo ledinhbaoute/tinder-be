@@ -13,9 +13,14 @@ const User = sequelize.define('User', {
   phoneNumber: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
   birthDay: {
     type: DataTypes.DATE,
+    allowNull: false,
+  },
+  interest: {
+    type: DataTypes.STRING,
     allowNull: false,
   },
 });

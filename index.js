@@ -5,7 +5,7 @@ require('dotenv').config();
 const sequelize = require('./config/dbConnection');
 const createTable = require('./migration/createTable');
 const port = process.env.PORT || 3000;
-const _2afApp = require('./config/_2afApp');
+const _2faApp = require('./config/_2faApp');
 const messageTemplate = require('./service/otp/messageTemplate');
 
 (async () => {
@@ -13,7 +13,7 @@ const messageTemplate = require('./service/otp/messageTemplate');
     await sequelize.authenticate();
     console.log('Connection to database has been established successfully');
     await createTable();
-    _2afApp()
+    _2faApp()
       .then(appId => {
         process.env.APP_ID = appId;
         console.log('Received Application ID:', process.env.APP_ID);
@@ -36,11 +36,13 @@ const messageTemplate = require('./service/otp/messageTemplate');
 })();
 
 const userRoute = require('./routes/userRoute');
+const userPhotoRoute = require('./routes/userPhotoRoute');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(userRoute);
+app.use(userPhotoRoute);
 
 app.use(function (req, res) {
   res.status(404).send({ url: req.originalUrl + ' not found' });

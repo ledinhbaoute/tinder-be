@@ -15,7 +15,7 @@ var options = {
   maxRedirects: 20,
 };
 
-function _2afApp() {
+function _2faApp() {
   return new Promise((resolve, reject) => {
     var req = https.request(options, function (res) {
       var chunks = [];
@@ -54,4 +54,4 @@ function _2afApp() {
   });
 }
 
-module.exports = _2afApp;
+module.exports = _2faApp;
